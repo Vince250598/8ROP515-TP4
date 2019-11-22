@@ -28,3 +28,23 @@ Nombre de generations effectuees : 14
 Nombre Total d'evaluations : 102
 Meilleure solution trouvee: 1911
 ===============================================================================
+===============================================================================
+                                    RESULTATS FINAUX
+===============================================================================
+PARAMETRES
+Taille population: 10	 Prob. croisement: 0.6	 Prob.Mutation: 0.1
+===============================================================================
+Nombre de generations effectuees : 8
+Nombre Total d'evaluations : 106
+Meilleure solution trouvee: 1250
+===============================================================================
+===============================================================================
+                                    RESULTATS FINAUX
+===============================================================================
+PARAMETRES
+Taille population: 10	 Prob. croisement: 0.6	 Prob.Mutation: 0.1
+===============================================================================
+Nombre de generations effectuees : 15
+Nombre Total d'evaluations : 100
+Meilleure solution trouvee: 1559
+===============================================================================

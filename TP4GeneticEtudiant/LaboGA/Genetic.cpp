@@ -154,6 +154,77 @@ int main(int NbParam, char *Param[])
 	return 0;
 }
 
+
+/*Offre une bonne performance dans notre cas car on garde la position absolue de certain éléments faisant partie
+d'une coupe et on ne se fie pas à la position relative des éléments. Il n'y a pas de rotation comme dans le problème du
+voyageur de commerce.*/
+void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
+{
+	//Pour générer un nombre aléatoire à chaque fois
+	srand(time(NULL));
+
+	//nombre aleatoire entre 0 et nombre de taches
+	int debutCoupe = rand() % (Parent1.Seq.size() - 1); //-1?
+
+	srand(time(NULL));
+
+	//nombre aleatoire entre debutCoupe et nombre de taches
+	int finCoupe = rand() % (Parent1.Seq.size() - debutCoupe) + debutCoupe;
+
+	//On place les taches compris dans la coupe aux mêmes positions dans l'enfant
+	for (int i = debutCoupe; i <= finCoupe; i++)
+	{
+		Enfant.Seq.at(i) = Parent1.Seq.at(i);
+	}
+
+	//Boucle pour chaque tache qui fait partie de la coupe
+	for (int i = debutCoupe; i <= finCoupe; i++)
+	{
+		//On prend la valeur qui se trouve à la position i dans le parent 2
+		int valeurChercher = Parent2.Seq.at(i);
+		//On chercher cette valeur dans le parent 1
+		vector<int>::iterator it = find(Parent1.Seq.begin() + debutCoupe, Parent1.Seq.begin() + finCoupe + 1, valeurChercher);
+
+		//Si la valeur se retrouve à une position qui fait partie de la coupe, on doit chercher une nouvelle position à cette valeur dans l'enfant
+		if (it == Parent1.Seq.begin() + finCoupe + 1)
+		{
+			bool positionTrouve = false;
+			//On prend la valeur qui se trouve à la même position que i dans le parent 1
+			int valeurParent1 = Parent1.Seq.at(i);
+			int indexValeurParent1DansParent2;
+			do
+			{
+				//on trouve cette valeur dans parent 2
+				vector<int>::iterator it = find(Parent2.Seq.begin(), Parent2.Seq.end(), valeurParent1);
+				if (it != Parent2.Seq.end()) {
+					indexValeurParent1DansParent2 = distance(Parent2.Seq.begin(), it);
+				}
+				/*si la valeur dans le parent 2 n'est pas à une position qui fait partie de la coupe,
+				on insert la valeur original(celle à la position du i dans le parent 2) dans l'enfant à la position trouvé*/
+				if (indexValeurParent1DansParent2 < debutCoupe || indexValeurParent1DansParent2 > finCoupe)
+				{
+					Enfant.Seq.at(indexValeurParent1DansParent2) = Parent2.Seq.at(i);
+					positionTrouve = true;
+				}
+				else
+				{
+					//sinon, on recommence avec la valeur qui se trouve à la même position dans le parent 1 jusqu'a ce qu'on trouve une position adéquate
+					valeurParent1 = Parent1.Seq.at(indexValeurParent1DansParent2);
+				}
+			} while (!positionTrouve);
+		}
+	}
+
+	//On ajoute les éléments manquant de l'enfant avec les éléments de parent 2 qui sont aux mêmes positions
+	for (int i = 0; i < Enfant.Seq.size(); i++)
+	{
+		if (Enfant.Seq.at(i) == 0) {
+			Enfant.Seq.at(i) = Parent2.Seq.at(i);
+		}
+	}
+}
+
+
 //******************************************************************************************************
 //**Fonction qui réalise le CROISEMENT (échange de genes) entre deux parents. Retourne l'enfant produit.
 //******************************************************************************************************
@@ -183,47 +254,6 @@ TIndividu Croisement(TIndividu Parent1, TIndividu Parent2, TProblem unProb, TGen
 	EvaluerSolution(Enfant, unProb, unGen);
 	return (Enfant);
 }
-
-void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant) {
-
-	srand(time(NULL));
-
-	//nombre aleatoire entre 0 et nombre de taches
-	int debutCoupe = rand() % (Enfant.Seq.size()-1);
-
-	//nombre aleatoire entre debutCoupe et nombre de taches
-	int finCoupe = rand() % (Enfant.Seq.size() - debutCoupe) + debutCoupe;
-
-	for (int i = debutCoupe; i < finCoupe; i++)
-	{
-		Enfant.Seq.at(i) = Parent1.Seq.at(i);
-	}
-
-	for (int i = debutCoupe; i < finCoupe; i++)
-	{
-		if(Enfant.Seq.at(i) != Parent2.Seq.at(i)) 
-		{
-			bool positionTrouve = false;
-			do
-			{
-				int valeurParent1 = Parent1.Seq.at(i);
-				//trouver la valeur dans parent 2
-				int indexValeurParent1DansParent2 = find(Parent1.Seq.at(0), Parent1.Seq.at(Parent1.Seq.size() - 1), valeurParent1);
-				//si l'index est dans la coupe original
-				if (indexValeurParent1DansParent2 < debutCoupe || indexValeurParent1DansParent2 > finCoupe)
-				{
-					Enfant.Seq.at(indexValeurParent1DansParent2) = valeurParent1;
-					positionTrouve = true;
-				}
-			} while (!positionTrouve);
-		}
-	}
-
-
-
-
-}
-
 
 //*******************************************************************************************************
 //Fonction qui réalise le REMPLACEMENT de la population pour la prochaine génération. Cette fonction doit

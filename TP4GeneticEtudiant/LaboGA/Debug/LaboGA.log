@@ -1,3 +1,6 @@
 ﻿  Genetic.cpp
-d:\choses école\uqac\session 4\recherche opérationelle\tp4\8rop515-tp4\tp4 genetic etudiant\laboga\genetic.cpp(180): error C3861: 'PMX' : identificateur introuvable
-d:\choses école\uqac\session 4\recherche opérationelle\tp4\8rop515-tp4\tp4 genetic etudiant\laboga\genetic.cpp(189): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+d:\choses école\uqac\session 4\recherche opérationelle\tp4\8rop515-tp4\tp4geneticetudiant\laboga\genetic.cpp(164): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+d:\choses école\uqac\session 4\recherche opérationelle\tp4\8rop515-tp4\tp4geneticetudiant\laboga\genetic.cpp(169): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+d:\choses école\uqac\session 4\recherche opérationelle\tp4\8rop515-tp4\tp4geneticetudiant\laboga\genetic.cpp(219): warning C4018: '<' : incompatibilité signed/unsigned
+d:\choses école\uqac\session 4\recherche opérationelle\tp4\8rop515-tp4\tp4geneticetudiant\laboga\genetic.cpp(240): warning C4101: 'j' : variable locale non référencée
+  LaboGA.vcxproj -> D:\Choses école\UQAC\Session 4\Recherche Opérationelle\TP4\8ROP515-TP4\TP4GeneticEtudiant\Debug\LaboGA.exe
