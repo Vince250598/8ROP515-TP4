@@ -282,10 +282,9 @@ void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProbl
 	int j = 0;
 	for (int i = 0; i < unGen.TaillePop; i++)
 	{
-		if (i < (int)(unGen.TaillePop * proportion)) CopierSolution(Parents[i], Parents[i], unProb);
-		else if (i >= (int)(unGen.TaillePop * proportion))
+		if (i >= (int)(unGen.TaillePop * proportion))
 		{
-			CopierSolution(Enfants[j], Parents[i], unProb);
+			if(j < Enfants.size()) CopierSolution(Enfants[j], Parents[i], unProb);
 			j++;
 		}
 	}
