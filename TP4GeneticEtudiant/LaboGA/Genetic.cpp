@@ -58,6 +58,7 @@ extern "C" _declspec(dllexport) void LibererMemoireFinPgm (std::vector<TIndividu
 //*****************************************************************************************
 TIndividu Croisement(TIndividu Parent1, TIndividu Parent2, TProblem unProb, TGenetic & unGen);
 void Remplacement(std::vector<TIndividu> & Parents, std::vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen);
+void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen, float proportion);
 
 //******************************************************************************************
 // Fonction main
@@ -73,6 +74,8 @@ int main(int NbParam, char *Param[])
 	int Pere, Mere;						//**Indices de solution des parents
 	int i;
 	double Alea;
+	float proportion;
+	int choixRemplacement;
 	
 	string NomFichier;
 	
@@ -81,7 +84,9 @@ int main(int NbParam, char *Param[])
 	LeGenetic.TaillePop		= atoi(Param[2]);
 	LeGenetic.ProbCr		= atof(Param[3]);
 	LeGenetic.ProbMut		= atof(Param[4]);
-	LeGenetic.NB_EVAL_MAX	= atoi(Param[5]);
+	choixRemplacement = 1 || atoi(Param[7]);
+	proportion = (float) 0.5;//|| atof(Param[8]);
+	LeGenetic.NB_EVAL_MAX  =	7000;//= atoi(Param[5]);
 	LeProb.H				= atof(Param[6]);
 	LeGenetic.TaillePopEnfant	= (int)ceil(LeGenetic.ProbCr * LeGenetic.TaillePop);
 	LeGenetic.Gen = 0;
@@ -134,7 +139,8 @@ int main(int NbParam, char *Param[])
 		//AfficherSolutions(PopEnfant, 0, LeGenetic.TaillePopEnfant, LeGenetic.Gen, LeProb, false);
 		
 		//**REMPLACEMENT de la population pour la prochaine génération
-		Remplacement(Pop, PopEnfant, LeProb, LeGenetic);
+		if (choixRemplacement != 1) Remplacement(Pop, PopEnfant, LeProb, LeGenetic); //ILITISME
+		if (choixRemplacement == 1) Remplacement(Pop, PopEnfant, LeProb, LeGenetic, proportion); //PARTIEL
 		//AfficherSolutions(Pop, 0, LeGenetic.TaillePop, LeGenetic.Gen, LeProb, false);
 
 		//**Conservation de la meilleure solution
@@ -160,6 +166,9 @@ d'une coupe et on ne se fie pas à la position relative des éléments. Il n'y a pa
 voyageur de commerce.*/
 void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 {
+
+	int indexValeurParent1DansParent2;
+
 	//Pour générer un nombre aléatoire à chaque fois
 	srand(time(NULL));
 
@@ -191,7 +200,6 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 			bool positionTrouve = false;
 			//On prend la valeur qui se trouve à la même position que i dans le parent 1
 			int valeurParent1 = Parent1.Seq.at(i);
-			int indexValeurParent1DansParent2;
 			do
 			{
 				//on trouve cette valeur dans parent 2
@@ -237,7 +245,6 @@ TIndividu Croisement(TIndividu Parent1, TIndividu Parent2, TProblem unProb, TGen
 	//**Pour tirer un nombre aléatoire entier entre 0 et MAX-1 inclusivement, il suffit d'utiliser l'instruction suivante : NombreAleatoire = rand() % MAX;
 	
 	TIndividu Enfant;
-	int j;
 
 	//Création de l'enfant selon la taille du problème
 	Enfant.Seq.resize(unProb.NbTache);
@@ -264,28 +271,50 @@ TIndividu Croisement(TIndividu Parent1, TIndividu Parent2, TProblem unProb, TGen
 //**A DÉFINIR PAR L'ÉTUDIANT*****************************************************************************
 //**NB: IL FAUT RESPECTER LA DEFINITION DES PARAMÈTRES
 //******************************************************************************************************* 
-void Remplacement(std::vector<TIndividu> & Parents, std::vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen)
+void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen, float proportion) //PARTIEL
 {
-	//**Déclaration et dimension dynamique d'une population temporaire pour contenir tous les parents et les enfants
-	//std::vector<TIndividu> Temporaire;
-	//Temporaire.resize(unGen.TaillePop + unGen.TaillePopEnfant);
-
 	//**Pour trier toute la population temporaire, il suffit de faire l'appel suivant: TrierPopulation(Temporaire, 0, unGen.TaillePop+unGen.TaillePopEnfant);
 	//**Pour copie une solution de Parents dans Temporaire, il suffit de faire l'appel suivant: CopierSolution(Parents[i], Temporaire[i], unProb);
 	
 
-	//METHODE BIDON: La population Parents demeure inchangée
+	TrierPopulation(Parents, 0, unGen.TaillePop);
+	TrierPopulation(Enfants, 0, unGen.TaillePopEnfant);
+	int j = 0;
+	for (int i = 0; i < unGen.TaillePop; i++)
+	{
+		if (i < (int)(unGen.TaillePop * proportion)) CopierSolution(Parents[i], Parents[i], unProb);
+		else if (i >= (int)(unGen.TaillePop * proportion))
+		{
+			CopierSolution(Enfants[j], Parents[i], unProb);
+			j++;
+		}
+	}
+}
 
-	
+void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen) //ÉLITISME
+{
+	//**Déclaration et dimension dynamique d'une population temporaire pour contenir tous les parents et les enfants
+	vector<TIndividu> Temporaire;
+	Temporaire.resize(unGen.TaillePop + unGen.TaillePopEnfant);
+	//**Pour trier toute la population temporaire, il suffit de faire l'appel suivant: TrierPopulation(Temporaire, 0, unGen.TaillePop+unGen.TaillePopEnfant);
+	//**Pour copie une solution de Parents dans Temporaire, il suffit de faire l'appel suivant: CopierSolution(Parents[i], Temporaire[i], unProb);
+	//ILITISME BEGIN
+	int i;
+	Temporaire.insert(Temporaire.end(), Parents.begin(), Parents.end());
+	Temporaire.insert(Temporaire.end(), Enfants.begin(), Enfants.end());
+	TrierPopulation(Temporaire, 0, unGen.TaillePop + unGen.TaillePopEnfant);
+	for (i = 0; i < unGen.TaillePop; i++)
+	{
+		CopierSolution(Parents[i], Temporaire[i], unProb);
+	}
 	//**Libération de la population temporaire
-	//for(i=0; i< unGen.TaillePop; i++)
-	//{
-	//	Temporaire[i].Seq.clear();
-	//	Temporaire[i].Fin.clear();
-	//	Temporaire[i].PAvance.clear();
-	//	Temporaire[i].PRetard.clear();
-	//	Temporaire[i].TAvance.clear();
-	//	Temporaire[i].TRetard.clear();
-	//}
-	//Temporaire.clear();
+	for (int i = 0; i < unGen.TaillePop; i++)
+	{
+		Temporaire[i].Seq.clear();
+		Temporaire[i].Fin.clear();
+		Temporaire[i].PAvance.clear();
+		Temporaire[i].PRetard.clear();
+		Temporaire[i].TAvance.clear();
+		Temporaire[i].TRetard.clear();
+	}
 }
