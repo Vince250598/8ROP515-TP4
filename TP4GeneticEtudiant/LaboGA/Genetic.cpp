@@ -81,11 +81,11 @@ int main(int NbParam, char *Param[])
 	
 	//**Lecture des paramètres
 	NomFichier.assign(Param[1]);
-	LeGenetic.TaillePop		= atoi(Param[2]);
-	LeGenetic.ProbCr		= atof(Param[3]);
-	LeGenetic.ProbMut		= atof(Param[4]);
+	LeGenetic.TaillePop = atoi(Param[2]);
+	LeGenetic.ProbCr		= 0.4;//= atof(Param[3]);
+	LeGenetic.ProbMut = 0.20;//= atof(Param[4]);
 	choixRemplacement = 1 || atoi(Param[7]);
-	proportion = (float) 0.5;//|| atof(Param[8]);
+	proportion = (float) 0.7;//|| atof(Param[8]);
 	LeGenetic.NB_EVAL_MAX  =	7000;//= atoi(Param[5]);
 	LeProb.H				= atof(Param[6]);
 	LeGenetic.TaillePopEnfant	= (int)ceil(LeGenetic.ProbCr * LeGenetic.TaillePop);
@@ -160,12 +160,32 @@ int main(int NbParam, char *Param[])
 	return 0;
 }
 
+int TrouverElement(TIndividu individu, int valeurATrouver) 
+{
+	int index;
+	for (int i = 0; i < individu.Seq.size(); i++)
+	{
+		if (individu.Seq.at(i) == valeurATrouver)
+		{
+			index = i;
+			break;
+		}
+	}
+
+	return index;
+}
+
 
 /*Offre une bonne performance dans notre cas car on garde la position absolue de certain éléments faisant partie
 d'une coupe et on ne se fie pas à la position relative des éléments. Il n'y a pas de rotation comme dans le problème du
 voyageur de commerce.*/
 void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 {
+	//Pour marquer les taches non assignees
+	for (int i = 0; i < Enfant.Seq.size(); i++)
+	{
+		Enfant.Seq.at(i) = -999;
+	}
 
 	int indexValeurParent1DansParent2;
 
@@ -178,7 +198,12 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 	srand(time(NULL));
 
 	//nombre aleatoire entre debutCoupe et nombre de taches
-	int finCoupe = rand() % (Parent1.Seq.size() - debutCoupe) + debutCoupe;
+	//int finCoupe = rand() % (Parent1.Seq.size() - debutCoupe) + debutCoupe;
+	int finCoupe = debutCoupe + 4;
+	if (finCoupe > 9)
+	{
+		finCoupe = 9;
+	}
 
 	//On place les taches compris dans la coupe aux mêmes positions dans l'enfant
 	for (int i = debutCoupe; i <= finCoupe; i++)
@@ -192,10 +217,10 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 		//On prend la valeur qui se trouve à la position i dans le parent 2
 		int valeurChercher = Parent2.Seq.at(i);
 		//On chercher cette valeur dans le parent 1
-		vector<int>::iterator it = find(Parent1.Seq.begin() + debutCoupe, Parent1.Seq.begin() + finCoupe + 1, valeurChercher);
+		int index = TrouverElement(Parent1, valeurChercher);
 
-		//Si la valeur se retrouve à une position qui fait partie de la coupe, on doit chercher une nouvelle position à cette valeur dans l'enfant
-		if (it == Parent1.Seq.begin() + finCoupe + 1)
+		//Si la valeur se retrouve à une position qui fait partie de la coupe, la valeur est deja dans l'enfant
+		if (index > finCoupe || index < debutCoupe)
 		{
 			bool positionTrouve = false;
 			//On prend la valeur qui se trouve à la même position que i dans le parent 1
@@ -203,10 +228,8 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 			do
 			{
 				//on trouve cette valeur dans parent 2
-				vector<int>::iterator it = find(Parent2.Seq.begin(), Parent2.Seq.end(), valeurParent1);
-				if (it != Parent2.Seq.end()) {
-					indexValeurParent1DansParent2 = distance(Parent2.Seq.begin(), it);
-				}
+				indexValeurParent1DansParent2 = TrouverElement(Parent2, valeurParent1);
+			
 				/*si la valeur dans le parent 2 n'est pas à une position qui fait partie de la coupe,
 				on insert la valeur original(celle à la position du i dans le parent 2) dans l'enfant à la position trouvé*/
 				if (indexValeurParent1DansParent2 < debutCoupe || indexValeurParent1DansParent2 > finCoupe)
@@ -224,12 +247,20 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 	}
 
 	//On ajoute les éléments manquant de l'enfant avec les éléments de parent 2 qui sont aux mêmes positions
-	for (int i = 0; i < Enfant.Seq.size(); i++)
+	for (int i = 0; i < debutCoupe; i++)
 	{
-		if (Enfant.Seq.at(i) == 0) {
+		if (Enfant.Seq.at(i) == -999) {
 			Enfant.Seq.at(i) = Parent2.Seq.at(i);
 		}
 	}
+	for (int i = finCoupe + 1; i < Enfant.Seq.size(); i++)
+	{
+		if (Enfant.Seq.at(i) == -999) {
+			Enfant.Seq.at(i) = Parent2.Seq.at(i);
+		}
+	}
+
+	return;
 }
 
 
