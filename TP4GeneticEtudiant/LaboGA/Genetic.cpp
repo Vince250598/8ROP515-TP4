@@ -19,7 +19,7 @@
 extern "C" _declspec(dllimport) void LectureProbleme(std::string FileName, TProblem & unProb, TGenetic &unGenetic);
 
 //DESCRIPTION:	Fonction d'affichage à l'écran permettant de voir si les données du fichier problème ont été lues correctement
-extern "C" _declspec(dllimport) void AfficherProbleme (TProblem unProb);
+extern "C" _declspec(dllimport) void AfficherProbleme(TProblem unProb);
 
 //DESCRIPTION:	Évaluation de la fonction objectif d'une solution et MAJ du compteur d'évaluation. 
 //				Retourne un long représentant la somme des pénalités d'avance et de retard
@@ -36,28 +36,27 @@ extern "C" _declspec(dllimport) void AfficherSolutions(std::vector<TIndividu> un
 extern "C" _declspec(dllimport) void TrierPopulation(std::vector<TIndividu> & unePop, int Debut, int Fin);
 
 //DESCRIPTION: Copie de la séquence et de la fonction objectif dans une nouvelle TSolution. La nouvelle TSolution est retournée.
-extern "C" _declspec(dllimport) void CopierSolution (const TIndividu uneSol, TIndividu &Copie, TProblem unProb);
+extern "C" _declspec(dllimport) void CopierSolution(const TIndividu uneSol, TIndividu &Copie, TProblem unProb);
 
 //DESCRIPTION: Fonction qui réalise la MUTATION (modification aléatoire) d'une solution: Inversion de sous-séquence (50%) ou échange de 2 tâches(50%)
 extern "C" _declspec(dllimport) void Mutation(TIndividu & Mutant, TProblem unProb, TGenetic & unGen);
 
 //DESCRIPTION: Fonction de sélection d'un individu par tournoi (taille 2). Validation afin de ne pas sélectionner 2 fois le même individu
-extern "C" _declspec(dllexport) int Selection (std::vector<TIndividu> unePop, int _Taille, TProblem unProb);
+extern "C" _declspec(dllexport) int Selection(std::vector<TIndividu> unePop, int _Taille, TProblem unProb);
 
 //DESCRIPTION: Fonction affichant les résultats de l'algorithme génétique
-extern "C" _declspec(dllexport) void AfficherResultats (TIndividu uneBest, TProblem unProb, TGenetic unGen);
+extern "C" _declspec(dllexport) void AfficherResultats(TIndividu uneBest, TProblem unProb, TGenetic unGen);
 
 //DESCRIPTION: Fonction affichant les résultats de l'algorithme génétique dans un fichier texte
-extern "C" _declspec(dllexport) void AfficherResultatsFichier (TIndividu uneBest, TProblem unProb, TGenetic unGen, std::string FileName);
+extern "C" _declspec(dllexport) void AfficherResultatsFichier(TIndividu uneBest, TProblem unProb, TGenetic unGen, std::string FileName);
 
 //DESCRIPTION:	Libération de la mémoire allouée dynamiquement
-extern "C" _declspec(dllexport) void LibererMemoireFinPgm (std::vector<TIndividu> & unePop, std::vector<TIndividu> & unePopEnfant, TIndividu & uneBest, TProblem & unProb, TGenetic unGen);
+extern "C" _declspec(dllexport) void LibererMemoireFinPgm(std::vector<TIndividu> & unePop, std::vector<TIndividu> & unePopEnfant, TIndividu & uneBest, TProblem & unProb, TGenetic unGen);
 
 //*****************************************************************************************
 // Prototype des fonctions locales pour vos développements
 //*****************************************************************************************
 TIndividu Croisement(TIndividu Parent1, TIndividu Parent2, TProblem unProb, TGenetic & unGen);
-void Remplacement(std::vector<TIndividu> & Parents, std::vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen);
 void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen, float proportion);
 
 //******************************************************************************************
@@ -65,30 +64,31 @@ void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProbl
 //*****************************************************************************************
 int main(int NbParam, char *Param[])
 {
+	//INITIALISATION DU RANDOM
+	srand(time(NULL));
 	TProblem LeProb;					//**Définition de l'instance de problème
 	TGenetic LeGenetic;					//**Définition des paramètres de l'algorithme
 	std::vector<TIndividu> Pop;			//**Population composée de Taille_Pop Individus 
 	std::vector<TIndividu> PopEnfant;	//**Population d'enfant
 	TIndividu Best;						//**Meilleure solution depuis le début de l'algorithme
-	
+
 	int Pere, Mere;						//**Indices de solution des parents
 	int i;
 	double Alea;
 	float proportion;
 	int choixRemplacement;
-	
+
 	string NomFichier;
-	
+
 	//**Lecture des paramètres
-	NomFichier.assign(Param[1]);
-	LeGenetic.TaillePop = atoi(Param[2]);
-	LeGenetic.ProbCr		= 0.4;//= atof(Param[3]);
-	LeGenetic.ProbMut = 0.20;//= atof(Param[4]);
-	choixRemplacement = 1 || atoi(Param[7]);
-	proportion = (float) 0.7;//|| atof(Param[8]);
-	LeGenetic.NB_EVAL_MAX  =	7000;//= atoi(Param[5]);
-	LeProb.H				= atof(Param[6]);
-	LeGenetic.TaillePopEnfant	= (int)ceil(LeGenetic.ProbCr * LeGenetic.TaillePop);
+	NomFichier = "FichierC.txt";//.assign(Param[1]);
+	LeGenetic.TaillePop = 20;//atoi(Param[2]);
+	LeGenetic.ProbCr = 0.5;//= atof(Param[3]);
+	LeGenetic.ProbMut = 0.25;//= atof(Param[4]);
+	proportion = (float) 0.50;//|| atof(Param[7]);
+	LeGenetic.NB_EVAL_MAX = 7000;//= atoi(Param[5]);
+	LeProb.H = 0.2;//atof(Param[6]);
+	LeGenetic.TaillePopEnfant = (int)ceil(LeGenetic.ProbCr * LeGenetic.TaillePop);
 	LeGenetic.Gen = 0;
 
 	//**Définition de la dimension des tableaux
@@ -103,7 +103,7 @@ int main(int NbParam, char *Param[])
 	//**CptEval est donc = TaillePop au retour de la fonction.
 	CreerPopInitialeAlea(Pop, LeProb, LeGenetic);
 	//AfficherSolutions(Pop, 0, LeGenetic.TaillePop, LeGenetic.Gen, LeProb, false);
-	
+
 	//**Tri de la population
 	TrierPopulation(Pop, 0, LeGenetic.TaillePop);
 	//AfficherSolutions(Pop, 0, LeGenetic.TaillePop, LeGenetic.Gen, LeProb, false);
@@ -111,18 +111,18 @@ int main(int NbParam, char *Param[])
 	//**Initialisation de de la meilleure solution
 	CopierSolution(Pop[0], Best, LeProb);
 	cout << endl << "Meilleure solution de la population initiale: " << Best.FctObj << endl << endl;  //**NE PAS ENLEVER
-	
+
 	//**Boucle principale de l'algorithme génétique
-	do 
+	do
 	{
-		LeGenetic.Gen ++;
+		LeGenetic.Gen++;
 		//**Sélection et croisement
-		for (i=0; i<LeGenetic.TaillePopEnfant; i++)
+		for (i = 0; i < LeGenetic.TaillePopEnfant; i++)
 		{
 			//**SÉLECTION de deux parents
 			Pere = Selection(Pop, LeGenetic.TaillePop, LeProb);
 			Mere = Selection(Pop, LeGenetic.TaillePop, LeProb);
-			
+
 			//**CROISEMENT entre les deux parents. Création d'UN enfant.
 			PopEnfant[i] = Croisement(Pop[Pere], Pop[Mere], LeProb, LeGenetic);
 
@@ -131,36 +131,35 @@ int main(int NbParam, char *Param[])
 			if (Alea < LeGenetic.ProbMut)
 			{
 				//Vérification pour ne pas perdre la meilleure solution connue avant mutation
-				if (Best.FctObj > PopEnfant[i].FctObj) 
+				if (Best.FctObj > PopEnfant[i].FctObj)
 					CopierSolution(PopEnfant[i], Best, LeProb);
 				Mutation(PopEnfant[i], LeProb, LeGenetic);
 			}
 		}
 		//AfficherSolutions(PopEnfant, 0, LeGenetic.TaillePopEnfant, LeGenetic.Gen, LeProb, false);
-		
-		//**REMPLACEMENT de la population pour la prochaine génération
-		if (choixRemplacement != 1) Remplacement(Pop, PopEnfant, LeProb, LeGenetic); //ILITISME
-		if (choixRemplacement == 1) Remplacement(Pop, PopEnfant, LeProb, LeGenetic, proportion); //PARTIEL
-		//AfficherSolutions(Pop, 0, LeGenetic.TaillePop, LeGenetic.Gen, LeProb, false);
 
+		//**REMPLACEMENT de la population pour la prochaine génération
+		Remplacement(Pop, PopEnfant, LeProb, LeGenetic, proportion); //PARTIEL
+
+		//AfficherSolutions(Pop, 0, LeGenetic.TaillePop, LeGenetic.Gen, LeProb, false);
 		//**Conservation de la meilleure solution
 		TrierPopulation(Pop, 0, LeGenetic.TaillePop);
 		if (Best.FctObj > Pop[0].FctObj)				//**NE PAS ENLEVER
 			CopierSolution(Pop[0], Best, LeProb);
-		cout << "Meilleure solution trouvee (Generation# "<< LeGenetic.Gen << "): " << Best.FctObj << endl;
+		cout << "Meilleure solution trouvee (Generation# " << LeGenetic.Gen << "): " << Best.FctObj << endl;
 
-	}while (LeGenetic.CptEval < LeGenetic.NB_EVAL_MAX);	//**NE PAS ENLEVER
+	} while (LeGenetic.CptEval < LeGenetic.NB_EVAL_MAX);	//**NE PAS ENLEVER
 
-	AfficherResultats (Best, LeProb, LeGenetic);		//**NE PAS ENLEVER
-	AfficherResultatsFichier (Best, LeProb, LeGenetic, "Resutats.txt");
-	
+	AfficherResultats(Best, LeProb, LeGenetic);		//**NE PAS ENLEVER
+	AfficherResultatsFichier(Best, LeProb, LeGenetic, "Resutats.txt");
+
 	LibererMemoireFinPgm(Pop, PopEnfant, Best, LeProb, LeGenetic);
 
 	system("PAUSE");
 	return 0;
 }
 
-int TrouverElement(TIndividu individu, int valeurATrouver) 
+int TrouverElement(TIndividu individu, int valeurATrouver)
 {
 	int index;
 	for (int i = 0; i < individu.Seq.size(); i++)
@@ -175,7 +174,6 @@ int TrouverElement(TIndividu individu, int valeurATrouver)
 	return index;
 }
 
-
 /*Offre une bonne performance dans notre cas car on garde la position absolue de certain éléments faisant partie
 d'une coupe et on ne se fie pas à la position relative des éléments. Il n'y a pas de rotation comme dans le problème du
 voyageur de commerce.*/
@@ -189,13 +187,10 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 
 	int indexValeurParent1DansParent2;
 
-	//Pour générer un nombre aléatoire à chaque fois
-	srand(time(NULL));
-
 	//nombre aleatoire entre 0 et nombre de taches
 	int debutCoupe = rand() % (Parent1.Seq.size() - 1); //-1?
 
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	//nombre aleatoire entre debutCoupe et nombre de taches
 	//int finCoupe = rand() % (Parent1.Seq.size() - debutCoupe) + debutCoupe;
@@ -229,7 +224,7 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 			{
 				//on trouve cette valeur dans parent 2
 				indexValeurParent1DansParent2 = TrouverElement(Parent2, valeurParent1);
-			
+
 				/*si la valeur dans le parent 2 n'est pas à une position qui fait partie de la coupe,
 				on insert la valeur original(celle à la position du i dans le parent 2) dans l'enfant à la position trouvé*/
 				if (indexValeurParent1DansParent2 < debutCoupe || indexValeurParent1DansParent2 > finCoupe)
@@ -263,7 +258,6 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 	return;
 }
 
-
 //******************************************************************************************************
 //**Fonction qui réalise le CROISEMENT (échange de genes) entre deux parents. Retourne l'enfant produit.
 //******************************************************************************************************
@@ -274,7 +268,7 @@ TIndividu Croisement(TIndividu Parent1, TIndividu Parent2, TProblem unProb, TGen
 {
 	//**INDICE: Le sous-programme rand() génère aléatoirement un nombre entier entre 0 et RAND_MAX (i.e., 32767) inclusivement.
 	//**Pour tirer un nombre aléatoire entier entre 0 et MAX-1 inclusivement, il suffit d'utiliser l'instruction suivante : NombreAleatoire = rand() % MAX;
-	
+
 	TIndividu Enfant;
 
 	//Création de l'enfant selon la taille du problème
@@ -306,7 +300,7 @@ void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProbl
 {
 	//**Pour trier toute la population temporaire, il suffit de faire l'appel suivant: TrierPopulation(Temporaire, 0, unGen.TaillePop+unGen.TaillePopEnfant);
 	//**Pour copie une solution de Parents dans Temporaire, il suffit de faire l'appel suivant: CopierSolution(Parents[i], Temporaire[i], unProb);
-	
+
 
 	TrierPopulation(Parents, 0, unGen.TaillePop);
 	TrierPopulation(Enfants, 0, unGen.TaillePopEnfant);
@@ -315,36 +309,8 @@ void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProbl
 	{
 		if (i >= (int)(unGen.TaillePop * proportion))
 		{
-			if(j < Enfants.size()) CopierSolution(Enfants[j], Parents[i], unProb);
+			if (j < Enfants.size()) CopierSolution(Enfants[j], Parents[i], unProb);
 			j++;
 		}
-	}
-}
-
-void Remplacement(vector<TIndividu> & Parents, vector<TIndividu> Enfants, TProblem unProb, TGenetic unGen) //ÉLITISME
-{
-	//**Déclaration et dimension dynamique d'une population temporaire pour contenir tous les parents et les enfants
-	vector<TIndividu> Temporaire;
-	Temporaire.resize(unGen.TaillePop + unGen.TaillePopEnfant);
-	//**Pour trier toute la population temporaire, il suffit de faire l'appel suivant: TrierPopulation(Temporaire, 0, unGen.TaillePop+unGen.TaillePopEnfant);
-	//**Pour copie une solution de Parents dans Temporaire, il suffit de faire l'appel suivant: CopierSolution(Parents[i], Temporaire[i], unProb);
-	//ILITISME BEGIN
-	int i;
-	Temporaire.insert(Temporaire.end(), Parents.begin(), Parents.end());
-	Temporaire.insert(Temporaire.end(), Enfants.begin(), Enfants.end());
-	TrierPopulation(Temporaire, 0, unGen.TaillePop + unGen.TaillePopEnfant);
-	for (i = 0; i < unGen.TaillePop; i++)
-	{
-		CopierSolution(Parents[i], Temporaire[i], unProb);
-	}
-	//**Libération de la population temporaire
-	for (int i = 0; i < unGen.TaillePop; i++)
-	{
-		Temporaire[i].Seq.clear();
-		Temporaire[i].Fin.clear();
-		Temporaire[i].PAvance.clear();
-		Temporaire[i].PRetard.clear();
-		Temporaire[i].TAvance.clear();
-		Temporaire[i].TRetard.clear();
 	}
 }
