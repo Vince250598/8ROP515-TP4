@@ -76,18 +76,17 @@ int main(int NbParam, char *Param[])
 	int i;
 	double Alea;
 	float proportion;
-	int choixRemplacement;
 
 	string NomFichier;
 
 	//**Lecture des paramètres
-	NomFichier = "FichierC.txt";//.assign(Param[1]);
-	LeGenetic.TaillePop = 20;//atoi(Param[2]);
-	LeGenetic.ProbCr = 0.5;//= atof(Param[3]);
-	LeGenetic.ProbMut = 0.25;//= atof(Param[4]);
-	proportion = (float) 0.50;//|| atof(Param[7]);
-	LeGenetic.NB_EVAL_MAX = 7000;//= atoi(Param[5]);
-	LeProb.H = 0.4;//atof(Param[6]);
+	NomFichier.assign(Param[1]);
+	LeGenetic.TaillePop = atoi(Param[2]);
+	LeGenetic.ProbCr = atof(Param[3]);
+	LeGenetic.ProbMut = atof(Param[4]);
+	proportion = (float) 0.50;
+	LeGenetic.NB_EVAL_MAX = atoi(Param[5]);
+	LeProb.H = atof(Param[6]);
 	LeGenetic.TaillePopEnfant = (int)ceil(LeGenetic.ProbCr * LeGenetic.TaillePop);
 	LeGenetic.Gen = 0;
 
