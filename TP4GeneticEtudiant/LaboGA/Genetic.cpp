@@ -87,7 +87,7 @@ int main(int NbParam, char *Param[])
 	LeGenetic.ProbMut = 0.25;//= atof(Param[4]);
 	proportion = (float) 0.50;//|| atof(Param[7]);
 	LeGenetic.NB_EVAL_MAX = 7000;//= atoi(Param[5]);
-	LeProb.H = 0.2;//atof(Param[6]);
+	LeProb.H = 0.4;//atof(Param[6]);
 	LeGenetic.TaillePopEnfant = (int)ceil(LeGenetic.ProbCr * LeGenetic.TaillePop);
 	LeGenetic.Gen = 0;
 
@@ -179,7 +179,7 @@ d'une coupe et on ne se fie pas à la position relative des éléments. Il n'y a pa
 voyageur de commerce.*/
 void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 {
-	int longueurCoupe = 4;
+	int longueurMaxCoupe = (int) Enfant.Seq.size()/3;
 
 	//Pour marquer les taches non assignees
 	for (int i = 0; i < Enfant.Seq.size(); i++)
@@ -190,12 +190,13 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 	int indexValeurParent1DansParent2;
 
 	//nombre aleatoire entre 0 et nombre de taches
-	int debutCoupe = rand() % (Parent1.Seq.size() - 1); //-1?
+	int debutCoupe = rand() % (Parent1.Seq.size() - 1);
 
 	//srand(time(NULL));
 
 	//nombre aleatoire entre debutCoupe et nombre de taches
 	//int finCoupe = rand() % (Parent1.Seq.size() - debutCoupe) + debutCoupe;
+	int longueurCoupe = rand() % (longueurMaxCoupe);
 	int finCoupe = debutCoupe + longueurCoupe;
 	if (finCoupe > (Enfant.Seq.size()-1))
 	{
