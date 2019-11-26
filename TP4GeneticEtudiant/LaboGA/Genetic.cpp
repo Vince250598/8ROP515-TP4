@@ -179,6 +179,8 @@ d'une coupe et on ne se fie pas à la position relative des éléments. Il n'y a pa
 voyageur de commerce.*/
 void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 {
+	int longueurCoupe = 4;
+
 	//Pour marquer les taches non assignees
 	for (int i = 0; i < Enfant.Seq.size(); i++)
 	{
@@ -194,10 +196,10 @@ void PMX(TIndividu Parent1, TIndividu Parent2, TIndividu &Enfant)
 
 	//nombre aleatoire entre debutCoupe et nombre de taches
 	//int finCoupe = rand() % (Parent1.Seq.size() - debutCoupe) + debutCoupe;
-	int finCoupe = debutCoupe + 4;
-	if (finCoupe > 9)
+	int finCoupe = debutCoupe + longueurCoupe;
+	if (finCoupe > (Enfant.Seq.size()-1))
 	{
-		finCoupe = 9;
+		finCoupe = (Enfant.Seq.size()-1);
 	}
 
 	//On place les taches compris dans la coupe aux mêmes positions dans l'enfant
