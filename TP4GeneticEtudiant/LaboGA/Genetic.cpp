@@ -4,6 +4,8 @@
 #include <time.h>
 #pragma comment (lib,"GeneticDLL.lib")
 
+/*Les modifications que nous avons effectuer commencent aux lignes: 70, 90, 144, 166, 184, 290, 306*/
+
 //%%%%%%%%%%%%%%%%%%%%%%%%% IMPORTANT: %%%%%%%%%%%%%%%%%%%%%%%%% 
 //Pour une exécution à l'aide du compilateur:
 //Le fichier de probleme (.txt)  doit se trouver dans le répertoire courant du projet;
@@ -84,6 +86,7 @@ int main(int NbParam, char *Param[])
 	LeGenetic.TaillePop = atoi(Param[2]);
 	LeGenetic.ProbCr = atof(Param[3]);
 	LeGenetic.ProbMut = atof(Param[4]);
+	//MODIFICATION
 	proportion = (float) 0.50;
 	LeGenetic.NB_EVAL_MAX = atoi(Param[5]);
 	LeProb.H = atof(Param[6]);
@@ -158,6 +161,8 @@ int main(int NbParam, char *Param[])
 	return 0;
 }
 
+//MODIFICATION
+//Pour trouver un élément dans un individu
 int TrouverElement(TIndividu individu, int valeurATrouver)
 {
 	int index;
